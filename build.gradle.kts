@@ -23,7 +23,9 @@ subprojects {
         maven("https://gitlab.com/api/v4/projects/26794598/packages/maven")
         maven("https://jitpack.io")
         maven("https://m2.dv8tion.net/releases")
+        maven("https://libraries.minecraft.net")
     }
+
 
     fun DependencyHandlerScope.include(
         dependencyNotation: String,

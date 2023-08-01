@@ -7,5 +7,8 @@ import kotlinx.serialization.Serializable
 data class DiscordNotifConfig(
     val usernames: List<String> = listOf(),
     @SerialName("update-channels")
-    val updateChannels: List<String> = listOf()
+    val updateChannels: List<Long> = listOf(),
+
+    @SerialName("update-message")
+    val updateMessage: String = "Hey @everyone, %displayName% has posted!"
 )

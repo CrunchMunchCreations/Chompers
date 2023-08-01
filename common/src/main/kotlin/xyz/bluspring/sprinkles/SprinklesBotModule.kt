@@ -21,16 +21,12 @@ abstract class SprinklesBotModule<C : Any>(val name: String) {
         config = try {
             Yaml.default.decodeFromString(configSerializer, configFile.readText())
         } catch (e: Exception) {
-            logger.error("Failed to load config! Creating a new one.")
+            logger.error("Failed to load config! Not going to continue.")
             e.printStackTrace()
-
-            if (!configFile.exists())
-                configFile.createNewFile()
-
-            configFile.writeText(Yaml.default.encodeToString(configSerializer, dummy))
-
-            dummy
+            throw e
         }
+
+        saveConfig()
     }
 
     open fun saveConfig() {

@@ -1,6 +1,8 @@
 package xyz.bluspring.sprinkles
 
+import com.google.gson.GsonBuilder
 import xyz.bluspring.sprinkles.config.MainConfig
+import xyz.bluspring.sprinkles.platform.twitch.TwitchApi
 
 class SprinklesCore : SprinklesBotModule<MainConfig>(NAME) {
     override val configSerializer = MainConfig.serializer()
@@ -9,7 +11,7 @@ class SprinklesCore : SprinklesBotModule<MainConfig>(NAME) {
     override fun start() {
         instance = this
 
-
+        TwitchApi.refreshAccessToken()
     }
 
     override fun stop() {
@@ -17,6 +19,9 @@ class SprinklesCore : SprinklesBotModule<MainConfig>(NAME) {
     }
 
     companion object {
+        val gson = GsonBuilder().apply {
+            setPrettyPrinting()
+        }.create()
         const val NAME = "Core"
 
         lateinit var instance: SprinklesCore

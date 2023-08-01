@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MainConfig(
-    val api: ApiConfigs = ApiConfigs()
+    val api: ApiConfigs = ApiConfigs(),
+    val storage: StorageConfigs = StorageConfigs()
 )
