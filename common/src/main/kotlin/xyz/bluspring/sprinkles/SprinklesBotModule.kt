@@ -1,6 +1,5 @@
 package xyz.bluspring.sprinkles
 
-import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.KSerializer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,7 +18,7 @@ abstract class SprinklesBotModule<C : Any>(val name: String) {
 
     open fun loadConfig() {
         config = try {
-            Yaml.default.decodeFromString(configSerializer, configFile.readText())
+            SprinklesCore.yaml.decodeFromString(configSerializer, configFile.readText())
         } catch (e: Exception) {
             logger.error("Failed to load config! Not going to continue.")
             e.printStackTrace()
@@ -33,7 +32,7 @@ abstract class SprinklesBotModule<C : Any>(val name: String) {
         if (!configFile.exists())
             configFile.createNewFile()
 
-        configFile.writeText(Yaml.default.encodeToString(configSerializer, config))
+        configFile.writeText(SprinklesCore.yaml.encodeToString(configSerializer, config))
     }
 
     abstract fun start()
