@@ -1,6 +1,7 @@
 package xyz.bluspring.sprinkles.discord.modules.notifications
 
 import com.charleskorn.kaml.Yaml
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import org.slf4j.LoggerFactory
 import xyz.artrinix.aviation.entities.AbstractModule
@@ -34,7 +35,9 @@ abstract class NotificationHandler(val platform: String) : AbstractModule {
             }
 
             override fun run() {
-                poll()
+                runBlocking {
+                    poll()
+                }
             }
         }, 0L, loopTime.inWholeMilliseconds)
     }
@@ -80,7 +83,7 @@ abstract class NotificationHandler(val platform: String) : AbstractModule {
         notificationStorage.writeText(Yaml.default.encodeToString(MarkedNotifications.serializer(), MarkedNotifications(markedNotifications)))
     }
 
-    abstract fun poll()
+    abstract suspend fun poll()
 
     @Serializable
     private data class MarkedNotifications(

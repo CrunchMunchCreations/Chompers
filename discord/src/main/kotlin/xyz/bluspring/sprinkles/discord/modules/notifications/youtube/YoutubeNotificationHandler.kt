@@ -26,7 +26,7 @@ class YoutubeNotificationHandler : NotificationHandler("YouTube") {
         }
     }
 
-    override fun poll() {
+    override suspend fun poll() {
         for (id in allIds) {
             val uploads = YoutubeApi.get("https://www.googleapis.com/youtube/v3/playlistItems?playlistId=UU${id.removePrefix("UC")}&part=snippet&maxResults=20")
 

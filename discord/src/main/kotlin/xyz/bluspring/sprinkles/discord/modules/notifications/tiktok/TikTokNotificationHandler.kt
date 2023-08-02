@@ -29,7 +29,7 @@ class TikTokNotificationHandler : NotificationHandler("TikTok") {
         }
     }
     
-    override fun poll() {
+    override suspend fun poll() {
         for (username in allUsernames) {
             val basicData = TikTokApi.getVideos(username)
             val prevMarked = this.getPreviousNotifications(username)

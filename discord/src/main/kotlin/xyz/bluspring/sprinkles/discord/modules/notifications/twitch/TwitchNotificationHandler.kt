@@ -2,8 +2,12 @@ package xyz.bluspring.sprinkles.discord.modules.notifications.twitch
 
 import dev.minn.jda.ktx.messages.Embed
 import dev.minn.jda.ktx.messages.MessageCreate
+import kotlinx.coroutines.flow.MutableSharedFlow
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
+import xyz.artrinix.aviation.events.Event
 import xyz.bluspring.sprinkles.discord.SprinklesDiscord
+import xyz.bluspring.sprinkles.discord.events.TwitchStartBroadcastingEvent
+import xyz.bluspring.sprinkles.discord.events.TwitchStopBroadcastingEvent
 import xyz.bluspring.sprinkles.discord.modules.notifications.NotificationHandler
 import xyz.bluspring.sprinkles.platform.twitch.TwitchApi
 import java.net.URI
@@ -12,6 +16,8 @@ import java.time.format.DateTimeFormatter
 class TwitchNotificationHandler : NotificationHandler("Twitch") {
     val updateChannels = mutableListOf<TextChannel>()
     val updateMessage = SprinklesDiscord.instance.config.notifications.twitch.updateMessage
+
+    private val isLive = mutableSetOf<String>()
 
     override val isEnabled: Boolean = false
 
@@ -25,7 +31,7 @@ class TwitchNotificationHandler : NotificationHandler("Twitch") {
         }
     }
 
-    override fun poll() {
+    override suspend fun poll() {
         val allUsernames = SprinklesDiscord.instance.config.notifications.twitch.usernames
 
         for (usernames in allUsernames.chunked(100)) {
@@ -46,6 +52,12 @@ class TwitchNotificationHandler : NotificationHandler("Twitch") {
                     continue
 
                 processed.add(username)
+
+                if (!isLive.contains(username)) {
+                    isLive.add(username)
+                    (SprinklesDiscord.instance.aviation.events as MutableSharedFlow<Event>)
+                        .emit(TwitchStartBroadcastingEvent(username))
+                }
 
                 val previous = getPreviousNotifications(username)
                 if (previous.contains(stream.get("id").asString))
@@ -85,6 +97,21 @@ class TwitchNotificationHandler : NotificationHandler("Twitch") {
                 }
 
                 markNotificationAsDone(username, stream.get("id").asString)
+            }
+
+            if (processed.size != isLive.size) {
+                val toRemove = mutableListOf<String>()
+
+                for (username in isLive) {
+                    if (processed.contains(username))
+                        continue
+
+                    toRemove.add(username)
+                    (SprinklesDiscord.instance.aviation.events as MutableSharedFlow<Event>)
+                        .emit(TwitchStopBroadcastingEvent(username))
+                }
+
+                isLive.removeAll(toRemove.toSet())
             }
         }
     }

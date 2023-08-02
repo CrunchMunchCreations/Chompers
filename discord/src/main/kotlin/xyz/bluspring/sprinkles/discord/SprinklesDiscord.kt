@@ -16,6 +16,8 @@ import xyz.artrinix.aviation.ratelimit.DefaultRateLimitStrategy
 import xyz.bluspring.sprinkles.SprinklesBotModule
 import xyz.bluspring.sprinkles.discord.commands.CommandHelper
 import xyz.bluspring.sprinkles.discord.config.DiscordConfig
+import xyz.bluspring.sprinkles.discord.events.TwitchStartBroadcastingEvent
+import xyz.bluspring.sprinkles.discord.events.TwitchStopBroadcastingEvent
 import xyz.bluspring.sprinkles.discord.modules.ModuleHelper
 
 class SprinklesDiscord : SprinklesBotModule<DiscordConfig>(NAME) {
@@ -28,10 +30,12 @@ class SprinklesDiscord : SprinklesBotModule<DiscordConfig>(NAME) {
     override fun start(): Unit = runBlocking {
         instance = this@SprinklesDiscord
 
+        val defaultPresence = Activity.of(Activity.ActivityType.PLAYING, "with Zuite!", "https://youtube.com/@zuite_")
+
         jda = light(config.token, true) {
             intents += listOf(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.MESSAGE_CONTENT)
 
-            setActivity(Activity.streaming("with Zuite!", "https://twitch.tv/zuite"))
+            setActivity(defaultPresence)
         }.awaitReady()
 
         aviation = AviationBuilder()
@@ -64,6 +68,18 @@ class SprinklesDiscord : SprinklesBotModule<DiscordConfig>(NAME) {
         aviation.on<ParsingErrorEvent> {
             logger.error("Aviation had a parsing error!")
             this.error.printStackTrace()
+        }
+
+        aviation.on<TwitchStartBroadcastingEvent> {
+            if (login == "zuite") {
+                jda.presence.activity = Activity.streaming("with Zuite!", "https://twitch.tv/zuite")
+            }
+        }
+
+        aviation.on<TwitchStopBroadcastingEvent> {
+            if (login == "zuite") {
+                jda.presence.activity = defaultPresence
+            }
         }
 
         jda.addEventListener(aviation)
