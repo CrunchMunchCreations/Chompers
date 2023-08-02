@@ -50,7 +50,7 @@ class YoutubeNotificationHandler : NotificationHandler("YouTube") {
                 val publishedAt = Instant.from(temporal)
                 val publishedMs = publishedAt.toEpochMilli()
 
-                if (System.currentTimeMillis() - publishedMs > 14.days.inWholeMilliseconds)
+                if (System.currentTimeMillis() - publishedMs > 3.days.inWholeMilliseconds)
                     continue
 
                 val title = snippet.get("title").asString

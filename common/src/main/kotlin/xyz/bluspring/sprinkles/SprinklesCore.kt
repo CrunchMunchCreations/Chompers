@@ -24,6 +24,7 @@ class SprinklesCore : SprinklesBotModule<MainConfig>(NAME) {
 
     companion object {
         val gson: Gson = GsonBuilder().apply {
+            setLenient()
             setPrettyPrinting()
         }.create()
 
