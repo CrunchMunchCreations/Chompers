@@ -8,7 +8,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
 object Sprinkles {
-    private val logger = LoggerFactory.getLogger("Sprinkles")
+    private val logger = LoggerFactory.getLogger(Sprinkles::class.java)
     private val modulesToLoad: List<KClass<*>> = listOf(
         SprinklesCore::class,
         SprinklesDiscord::class,
