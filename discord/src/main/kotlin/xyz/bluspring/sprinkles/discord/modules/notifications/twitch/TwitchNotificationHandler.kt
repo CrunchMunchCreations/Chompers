@@ -19,7 +19,7 @@ class TwitchNotificationHandler : NotificationHandler("Twitch") {
 
     private val isLive = mutableSetOf<String>()
 
-    override val isEnabled: Boolean = false
+    override val isEnabled: Boolean = true
 
     override suspend fun onEnable() {
         super.onEnable()
