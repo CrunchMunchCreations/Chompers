@@ -8,7 +8,7 @@ import java.io.File
 abstract class SprinklesBotModule<C : Any>(val name: String) {
     lateinit var config: C
 
-    protected val logger: Logger = LoggerFactory.getLogger("$name Module")
+    protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     abstract val configSerializer: KSerializer<C>
     abstract val dummy: C

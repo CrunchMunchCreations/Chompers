@@ -11,7 +11,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 object TwitchApi {
-    private val logger = LoggerFactory.getLogger("Twitch API")
+    private val logger = LoggerFactory.getLogger(TwitchApi::class.java)
 
     var accessToken: String? = null
 

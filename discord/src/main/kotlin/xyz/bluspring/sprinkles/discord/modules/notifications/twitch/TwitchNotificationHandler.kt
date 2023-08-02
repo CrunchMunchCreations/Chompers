@@ -75,6 +75,8 @@ class TwitchNotificationHandler : NotificationHandler("Twitch") {
                             name = "Game"
                             value = stream.get("game_name").asString
                         }
+
+                        color = 0x6441a5
                     }
                 }
 

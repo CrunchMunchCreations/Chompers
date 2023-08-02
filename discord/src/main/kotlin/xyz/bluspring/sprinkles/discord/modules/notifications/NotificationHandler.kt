@@ -2,7 +2,6 @@ package xyz.bluspring.sprinkles.discord.modules.notifications
 
 import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.Serializable
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import xyz.artrinix.aviation.entities.AbstractModule
 import xyz.bluspring.sprinkles.SprinklesCore
@@ -14,7 +13,7 @@ import kotlin.time.Duration.Companion.minutes
 
 abstract class NotificationHandler(val platform: String) : AbstractModule {
     private lateinit var task: TimerTask
-    protected val logger = LoggerFactory.getLogger("$platform Notification Handler")
+    protected val logger = LoggerFactory.getLogger(this::class.java)
 
     open val loopTime: Duration = 5.minutes
     open val isEnabled = true
@@ -96,7 +95,6 @@ abstract class NotificationHandler(val platform: String) : AbstractModule {
     )
 
     companion object {
-        protected val logger: Logger = LoggerFactory.getLogger("Notification Handler")
         private val timer = Timer("Notification Handler")
     }
 }
