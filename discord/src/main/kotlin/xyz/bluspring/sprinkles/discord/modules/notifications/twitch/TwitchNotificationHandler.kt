@@ -13,13 +13,13 @@ import xyz.bluspring.sprinkles.platform.twitch.TwitchApi
 import java.net.URI
 import java.time.format.DateTimeFormatter
 
-class TwitchNotificationHandler : NotificationHandler("Twitch") {
+open class TwitchNotificationHandler : NotificationHandler("Twitch") {
     val updateChannels = mutableListOf<TextChannel>()
     val updateMessage = SprinklesDiscord.instance.config.notifications.twitch.updateMessage
 
-    private val isLive = mutableSetOf<String>()
+    val isLive = mutableSetOf<String>()
 
-    override val isEnabled: Boolean = true
+    override val isEnabled: Boolean = false
 
     override suspend fun onEnable() {
         super.onEnable()

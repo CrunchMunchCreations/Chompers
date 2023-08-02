@@ -28,7 +28,10 @@ abstract class NotificationHandler(val platform: String) : AbstractModule {
         logger.info("Enabled notification handler module for platform $platform")
 
         loadMarkedNotifications()
+        runTimer()
+    }
 
+    open fun runTimer() {
         timer.scheduleAtFixedRate(object : TimerTask() {
             init {
                 task = this

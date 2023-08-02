@@ -107,4 +107,25 @@ object TwitchApi {
 
         return JsonParser.parseString(resp.body()).asJsonObject
     }
+
+    fun getUserIds(usernames: List<String>): Map<String, String> {
+        val map = mutableMapOf<String, String>()
+
+        for (usernameList in usernames.chunked(100)) {
+            val json = get(URI.create("https://api.twitch.tv/helix/users?login=${usernameList.joinToString("&login=")}")) ?: continue
+
+            if (!json.has("data")) {
+                logger.error("Failed to load users: $json")
+                continue
+            }
+
+            for (jsonElement in json.getAsJsonArray("data")) {
+                val data = jsonElement.asJsonObject
+
+                map[data.get("login").asString] = data.get("id").asString
+            }
+        }
+
+        return map
+    }
 }
