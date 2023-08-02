@@ -25,8 +25,11 @@ object TwitchUserAuth {
     var expiryTimestamp: Long = 0L
 
     fun loadPrevious() {
-        if (!STORAGE_FILE.exists())
+        if (!STORAGE_FILE.exists()) {
+            getNewAccessToken()
+
             return
+        }
         
         val json = JsonParser.parseString(STORAGE_FILE.readText()).asJsonObject
 
@@ -50,7 +53,7 @@ object TwitchUserAuth {
     }
 
     fun getAuthUrl(): String {
-        return "https://id.twitch.tv/oauth2/authorize?client_id=${SprinklesCore.instance.config.api.twitch.clientId}&redirect_uri=${SprinklesTwitch.instance.config.redirectUri}&response_type=code&scope=chat%3Aread"
+        return "https://id.twitch.tv/oauth2/authorize?client_id=${SprinklesCore.instance.config.api.twitch.clientId}&redirect_uri=${SprinklesTwitch.instance.config.redirectUri}&response_type=code&scope=chat%3Aread+chat%3Aedit+channel%3Amoderate"
     }
 
     fun getNewAccessToken() {

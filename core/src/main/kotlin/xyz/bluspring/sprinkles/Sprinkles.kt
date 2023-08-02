@@ -4,6 +4,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import xyz.bluspring.sprinkles.discord.SprinklesDiscord
+import xyz.bluspring.sprinkles.twitch.SprinklesTwitch
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
@@ -12,7 +13,7 @@ object Sprinkles {
     private val modulesToLoad: List<KClass<*>> = listOf(
         SprinklesCore::class,
         SprinklesDiscord::class,
-        //SprinklesTwitch::class
+        SprinklesTwitch::class
     )
 
     val loadedModules = mutableMapOf<String, SprinklesBotModule<*>>()

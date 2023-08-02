@@ -7,5 +7,8 @@ import kotlinx.serialization.Serializable
 data class TwitchChatbotConfig(
     @SerialName("redirect-uri")
     val redirectUri: String = "http://localhost:52414",
-    val keys: TwitchAuthConfig = TwitchAuthConfig()
+    val keys: TwitchAuthConfig = TwitchAuthConfig(),
+
+    val prefix: String = "!",
+    val channels: List<String> = listOf()
 )
