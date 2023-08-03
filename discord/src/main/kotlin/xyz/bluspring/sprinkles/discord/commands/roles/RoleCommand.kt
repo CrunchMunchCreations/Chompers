@@ -15,6 +15,7 @@ import xyz.bluspring.sprinkles.discord.modules.roles.AssignableRole
 import xyz.bluspring.sprinkles.discord.modules.roles.RoleCategory
 import xyz.bluspring.sprinkles.discord.modules.roles.RoleManagerModule
 import java.util.*
+import kotlin.random.Random
 
 @SlashCommand("role", "Role commands", guildOnly = true, defaultUserPermissions = [ Permission.MANAGE_ROLES, Permission.MODERATE_MEMBERS ])
 class RoleCommand : Scaffold {
@@ -39,8 +40,8 @@ class RoleCommand : Scaffold {
             role: Role,
 
             @Name("display_name")
-            displayName: String,
-            description: String
+            displayName: String = role.name,
+            description: String = ""
         ) {
             if (RoleManagerModule.roles.none { it.id == categoryId }) {
                 ctx.sendPrivate("ID $categoryId does not exist!")
@@ -105,7 +106,12 @@ class RoleCommand : Scaffold {
             val category = RoleManagerModule.roles.first { it.id == categoryId }
 
             ctx.sendPrivate(category.roles.joinToString("\n") {
-                "${it.displayName} (<@&${it.roleId}>) - ${it.description}"
+                "${it.displayName} (<@&${it.roleId}>) - ${it.description.run {
+                    if (this.isBlank())
+                        return@run "(no description provided)"
+
+                    this
+                }}"
             })
         }
     }
@@ -121,9 +127,9 @@ class RoleCommand : Scaffold {
 
             @Description("The category name")
             name: String,
-            description: String,
+            description: String = "",
 
-            color: String
+            color: String = Random.nextInt(0xFFFFFF).toString(16)
         ) {
             if (RoleManagerModule.roles.any { it.id == id }) {
                 ctx.sendPrivate("ID $id has already been used!")
@@ -158,7 +164,12 @@ class RoleCommand : Scaffold {
             ctx.sendPrivateEmbed {
                 this.setAuthor("$id (PREVIEW)")
                 this.setTitle(name)
-                this.setDescription(description)
+                this.setDescription(description.run {
+                    if (this.isBlank())
+                        return@run "(no description provided)"
+
+                    this
+                })
                 this.setColor(colorHex)
             }
         }
