@@ -29,7 +29,8 @@ class SprinklesCore : SprinklesBotModule<MainConfig>(NAME) {
         }.create()
 
         val yaml = Yaml(configuration = YamlConfiguration(
-            singleLineStringStyle = SingleLineStringStyle.PlainExceptAmbiguous
+            singleLineStringStyle = SingleLineStringStyle.PlainExceptAmbiguous,
+            encodeDefaults = false
         ))
 
         const val NAME = "Core"
