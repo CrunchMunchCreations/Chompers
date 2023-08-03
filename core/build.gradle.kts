@@ -16,6 +16,13 @@ dependencies {
     shadowImpl(project(":twitch"))
 }
 
+
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "xyz.bluspring.sprinkles.Sprinkles"
+    }
+}
+
 tasks.shadowJar {
     configurations = listOf(shadowImpl)
 }
