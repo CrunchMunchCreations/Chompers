@@ -15,7 +15,6 @@ import xyz.bluspring.sprinkles.discord.modules.roles.AssignableRole
 import xyz.bluspring.sprinkles.discord.modules.roles.RoleCategory
 import xyz.bluspring.sprinkles.discord.modules.roles.RoleManagerModule
 import java.util.*
-import kotlin.random.Random
 
 @SlashCommand("role", "Role commands", guildOnly = true, defaultUserPermissions = [ Permission.MANAGE_ROLES, Permission.MODERATE_MEMBERS ])
 class RoleCommand : Scaffold {
@@ -39,9 +38,9 @@ class RoleCommand : Scaffold {
 
             @Description("The category name")
             name: String,
-            description: String = "",
+            description: String? = "",
 
-            color: String = Random.nextInt(0xFFFFFF).toString(16)
+            color: String
         ) {
             if (RoleManagerModule.roles.any { it.id == id }) {
                 ctx.sendPrivate("ID $id has already been used!")
@@ -53,7 +52,7 @@ class RoleCommand : Scaffold {
                 return
             }
 
-            if (description.length > 4096) {
+            if (description != null && description.length > 4096) {
                 ctx.sendPrivate("Description is too long!")
                 return
             }
@@ -66,7 +65,7 @@ class RoleCommand : Scaffold {
             val colorHex = color.removePrefix("#").toInt(16)
 
             val category = RoleCategory(
-                id, name, description,
+                id, name, description ?: "",
                 colorHex
             )
 
@@ -77,7 +76,7 @@ class RoleCommand : Scaffold {
                 this.setAuthor("(PREVIEW)")
                 this.setTitle(name)
                 this.setDescription(description.run {
-                    if (this.isBlank())
+                    if (this.isNullOrBlank())
                         return@run "(no description provided)"
 
                     this
@@ -185,9 +184,9 @@ class RoleCommand : Scaffold {
             ctx: SlashContext,
             id: String,
 
-            name: String = "",
-            description: String = "",
-            color: String = ""
+            name: String? = null,
+            description: String? = null,
+            color: String? = null
         ) {
             if (RoleManagerModule.roles.none { it.id == id }) {
                 ctx.sendPrivate("ID $id does not exist!")
@@ -196,7 +195,7 @@ class RoleCommand : Scaffold {
 
             val category = RoleManagerModule.roles.first { it.id == id }
 
-            if (color.isNotBlank()) {
+            if (!color.isNullOrEmpty()) {
                 if (color.removePrefix("#").length != 6) {
                     ctx.sendPrivate("Invalid color hex string!")
                     return
@@ -207,14 +206,14 @@ class RoleCommand : Scaffold {
             }
 
             category.name = name.run {
-                if (this.isBlank())
+                if (this.isNullOrBlank())
                     return@run category.name
 
                 this
             }
 
             category.description = name.run {
-                if (this.isBlank())
+                if (this.isNullOrBlank())
                     return@run category.name
 
                 this
@@ -236,8 +235,8 @@ class RoleCommand : Scaffold {
             role: Role,
 
             @Name("display_name")
-            displayName: String = role.name,
-            description: String = ""
+            displayName: String? = role.name,
+            description: String? = ""
         ) {
             if (RoleManagerModule.roles.none { it.id == categoryId }) {
                 ctx.sendPrivate("ID $categoryId does not exist!")
@@ -253,7 +252,7 @@ class RoleCommand : Scaffold {
 
             val assignable = AssignableRole(
                 role.idLong,
-                displayName, description
+                displayName ?: role.name, description ?: ""
             )
 
             category.roles.add(assignable)
