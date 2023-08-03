@@ -1,5 +1,6 @@
 package xyz.bluspring.sprinkles
 
+import com.charleskorn.kaml.PolymorphismStyle
 import com.charleskorn.kaml.SingleLineStringStyle
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
@@ -30,7 +31,8 @@ class SprinklesCore : SprinklesBotModule<MainConfig>(NAME) {
 
         val yaml = Yaml(configuration = YamlConfiguration(
             singleLineStringStyle = SingleLineStringStyle.PlainExceptAmbiguous,
-            encodeDefaults = false
+            encodeDefaults = false,
+            polymorphismStyle = PolymorphismStyle.Property
         ))
 
         const val NAME = "Core"

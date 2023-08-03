@@ -3,6 +3,7 @@ package xyz.bluspring.sprinkles.twitch
 import xyz.bluspring.sprinkles.SprinklesBotModule
 import xyz.bluspring.sprinkles.twitch.auth.TwitchUserAuth
 import xyz.bluspring.sprinkles.twitch.commands.CommandManager
+import xyz.bluspring.sprinkles.twitch.commands.custom.management.CustomCommandManager
 import xyz.bluspring.sprinkles.twitch.config.TwitchChatbotConfig
 import xyz.bluspring.sprinkles.twitch.irc.TwitchIRCChat
 
@@ -16,6 +17,8 @@ class SprinklesTwitch : SprinklesBotModule<TwitchChatbotConfig>(NAME) {
         instance = this
 
         TwitchUserAuth.loadPrevious()
+        CustomCommandManager.load()
+        CustomCommandManager.reloadDispatcher()
     }
 
     fun startIrc() {

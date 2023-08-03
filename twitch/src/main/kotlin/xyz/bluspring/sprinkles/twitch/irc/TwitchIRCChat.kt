@@ -9,6 +9,7 @@ import org.kitteh.irc.client.library.feature.twitch.TwitchSupport
 import org.slf4j.LoggerFactory
 import xyz.bluspring.sprinkles.twitch.SprinklesTwitch
 import xyz.bluspring.sprinkles.twitch.auth.TwitchUserAuth
+import xyz.bluspring.sprinkles.twitch.commands.CommandNotFoundException
 import xyz.bluspring.sprinkles.twitch.commands.TwitchUser
 
 object TwitchIRCChat {
@@ -62,10 +63,13 @@ object TwitchIRCChat {
                 return
 
             val command = ev.message.removePrefix(SprinklesTwitch.instance.config.prefix)
-            val user = TwitchUser(ev.actor.nick, ev.channel.name.removePrefix("#"))
+            val user = TwitchUser(ev.actor.nick, ev.channel.name.removePrefix("#"), ev)
 
             try {
-                SprinklesTwitch.instance.commandManager.dispatcher.execute(command, user)
+                SprinklesTwitch.instance.commandManager.multiDispatcher.execute(command, user)
+            } catch (_: CommandNotFoundException) {
+                user.send("Sprinkles is just a cat. Sprinkles doesn't know what you want.")
+                // don't handle CommandNotFoundExceptions
             } catch (e: Exception) {
                 user.send("Failed to run command! Error: ${e.message ?: e.localizedMessage}")
 
