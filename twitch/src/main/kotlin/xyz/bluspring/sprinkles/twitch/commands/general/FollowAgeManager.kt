@@ -96,7 +96,7 @@ object FollowAgeManager {
         if (hours > 0)
             formatting += String.format("%d hours ", hours)
 
-        if (years == 0 && months == 0 && days == 0) {
+        if (years == 0 && months == 0) {
             if (minutes > 0)
                 formatting += String.format("%d mins ", minutes)
 
