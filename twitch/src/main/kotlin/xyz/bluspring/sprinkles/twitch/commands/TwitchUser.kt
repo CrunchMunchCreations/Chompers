@@ -7,7 +7,7 @@ class TwitchUser(
     val sourceChannel: String
 ) {
     fun send(message: String) {
-        TwitchIRCChat.client?.getChannel(sourceChannel)?.ifPresent {
+        TwitchIRCChat.client?.getChannel("#$sourceChannel")?.ifPresent {
             it.sendMessage("@$login, $message")
         }
     }

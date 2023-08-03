@@ -38,9 +38,9 @@ class RoleCommand : Scaffold {
 
             @Description("The category name")
             name: String,
-            description: String? = "",
 
-            color: String
+            color: String,
+            description: String? = ""
         ) {
             if (RoleManagerModule.roles.any { it.id == id }) {
                 ctx.sendPrivate("ID $id has already been used!")

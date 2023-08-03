@@ -53,7 +53,7 @@ object TwitchUserAuth {
     }
 
     fun getAuthUrl(): String {
-        return "https://id.twitch.tv/oauth2/authorize?client_id=${SprinklesCore.instance.config.api.twitch.clientId}&redirect_uri=${SprinklesTwitch.instance.config.redirectUri}&response_type=code&scope=chat%3Aread+chat%3Aedit+channel%3Amoderate"
+        return "https://id.twitch.tv/oauth2/authorize?client_id=${SprinklesCore.instance.config.api.twitch.clientId}&redirect_uri=${SprinklesTwitch.instance.config.redirectUri}&response_type=code&scope=chat%3Aread+chat%3Aedit+channel%3Amoderate+moderator%3Aread%3Afollowers"
     }
 
     fun getNewAccessToken() {

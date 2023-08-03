@@ -30,7 +30,7 @@ object TikTokApi {
         parser.write(html)
         parser.end()
 
-        val json = handler.jsonData
+        val json = handler.jsonData ?: return listOf()
 
         val videos = mutableListOf<TikTokVideo>()
 
@@ -99,7 +99,7 @@ object TikTokApi {
     }
 
     private class TikTokCreatorPageHandler : KsoupHtmlHandler {
-        lateinit var jsonData: JsonObject
+        var jsonData: JsonObject? = null
         /*private var isInVideosList = false
         private var isInVideoTag = false
         private var isInVideoMetaTag = false

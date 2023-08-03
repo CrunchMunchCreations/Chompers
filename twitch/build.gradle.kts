@@ -2,6 +2,7 @@
 dependencies {
     implementation(project(":common"))
 
+    api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     api("org.kitteh.irc:client-lib:8.0.0")
 
     // i thought it would be incredibly funny if a Twitch chatbot

@@ -2,9 +2,11 @@ package xyz.bluspring.sprinkles.twitch.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.ArgumentType
+import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import xyz.bluspring.sprinkles.twitch.commands.general.FollowAgeCommand
+import xyz.bluspring.sprinkles.twitch.commands.general.FollowAgeWithUserCommand
 import xyz.bluspring.sprinkles.twitch.commands.general.TestCommand
 
 class CommandManager {
@@ -16,6 +18,10 @@ class CommandManager {
     init {
         dispatcher.register(
             literal("followage")
+                .then(
+                    argument("user", StringArgumentType.string())
+                        .executes(FollowAgeWithUserCommand())
+                )
                 .executes(FollowAgeCommand())
         )
 

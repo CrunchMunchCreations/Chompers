@@ -62,7 +62,7 @@ object TwitchIRCChat {
                 return
 
             val command = ev.message.removePrefix(SprinklesTwitch.instance.config.prefix)
-            val user = TwitchUser(ev.actor.nick, ev.channel.name)
+            val user = TwitchUser(ev.actor.nick, ev.channel.name.removePrefix("#"))
 
             try {
                 SprinklesTwitch.instance.commandManager.dispatcher.execute(command, user)
