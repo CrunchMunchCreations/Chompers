@@ -7,6 +7,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.periodUntil
 import xyz.bluspring.sprinkles.platform.twitch.TwitchApi
 import xyz.bluspring.sprinkles.twitch.auth.TwitchUserAuth
+import xyz.bluspring.sprinkles.twitch.commands.CooldownManager
 import xyz.bluspring.sprinkles.twitch.commands.TwitchUser
 import java.net.URI
 import kotlin.time.Duration.Companion.minutes
@@ -16,6 +17,9 @@ object FollowAgeManager {
     private val followCache = mutableMapOf<String, String>()
 
     fun sendFollowAge(context: CommandContext<TwitchUser>, username: String): Int {
+        if (!CooldownManager.isWithinCooldown(context.source.login, context.input.split(" ")[0], 5000, 15_000))
+            return 0
+
         val followTime = if (
             !followCache.contains(username) &&
             (

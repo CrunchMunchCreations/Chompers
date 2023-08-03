@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory
 import xyz.bluspring.sprinkles.SprinklesCore
 import xyz.bluspring.sprinkles.twitch.SprinklesTwitch
 import xyz.bluspring.sprinkles.twitch.commands.CommandManager
+import xyz.bluspring.sprinkles.twitch.commands.CooldownManager
 import xyz.bluspring.sprinkles.twitch.commands.TwitchUser
 import java.io.File
 import java.net.URL
@@ -73,6 +74,9 @@ object CustomCommandManager {
             }
 
             current.executes {
+                if (!CooldownManager.isWithinCooldown(it.source.login, command.name, command.globalCooldown, command.userCooldown))
+                    return@executes 0
+
                 it.source.send(
                     String.format(
                         command.response,

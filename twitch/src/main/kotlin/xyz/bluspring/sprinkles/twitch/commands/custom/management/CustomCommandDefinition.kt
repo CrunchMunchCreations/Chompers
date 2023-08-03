@@ -10,5 +10,8 @@ data class CustomCommandDefinition(
     var response: String,
     var enabled: Boolean = true,
     var reply: Boolean = true,
-    var permissionLevel: PermissionLevel = PermissionLevel.USER
+    var permissionLevel: PermissionLevel = PermissionLevel.USER,
+
+    var globalCooldown: Long = 5000,
+    var userCooldown: Long = 15000
 )

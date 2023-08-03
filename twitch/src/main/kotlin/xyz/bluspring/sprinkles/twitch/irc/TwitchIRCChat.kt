@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory
 import xyz.bluspring.sprinkles.twitch.SprinklesTwitch
 import xyz.bluspring.sprinkles.twitch.auth.TwitchUserAuth
 import xyz.bluspring.sprinkles.twitch.commands.CommandNotFoundException
+import xyz.bluspring.sprinkles.twitch.commands.CooldownManager
 import xyz.bluspring.sprinkles.twitch.commands.TwitchUser
 
 object TwitchIRCChat {
@@ -66,7 +67,9 @@ object TwitchIRCChat {
             val user = TwitchUser(ev.actor.nick, ev.channel.name.removePrefix("#"), ev)
 
             try {
-                SprinklesTwitch.instance.commandManager.multiDispatcher.execute(command, user)
+                val root = command.split(" ")[0]
+                if (SprinklesTwitch.instance.commandManager.multiDispatcher.execute(command, user) > 0)
+                    CooldownManager.triggerCooldown(user.login, root)
             } catch (_: CommandNotFoundException) {
                 user.send("Sprinkles is just a cat. Sprinkles doesn't know what you want.")
                 // don't handle CommandNotFoundExceptions
