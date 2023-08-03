@@ -8,7 +8,8 @@ data class RoleCategory(
     val name: String,
     val description: String,
     val color: Int,
-    var channel: Long,
 
-    val roles: List<AssignableRole>
+    // text channel ID -> message ID, selection ID
+    val channelToMessage: MutableMap<Long, Pair<Long, String>> = mutableMapOf(),
+    val roles: MutableList<AssignableRole> = mutableListOf(),
 )
