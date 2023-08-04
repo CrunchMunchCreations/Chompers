@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent
 import xyz.artrinix.aviation.entities.AbstractModule
 import xyz.bluspring.sprinkles.SprinklesCore
 import xyz.bluspring.sprinkles.discord.SprinklesDiscord
+import xyz.bluspring.sprinkles.discord.modules.roles.storage.AutoRoleStorage
 import java.io.File
 
 class AutoRoleModule : AbstractModule {

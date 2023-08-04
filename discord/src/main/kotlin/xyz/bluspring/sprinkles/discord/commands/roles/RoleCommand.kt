@@ -11,9 +11,9 @@ import xyz.artrinix.aviation.annotations.Name
 import xyz.artrinix.aviation.command.slash.SlashContext
 import xyz.artrinix.aviation.command.slash.annotations.*
 import xyz.artrinix.aviation.entities.Scaffold
-import xyz.bluspring.sprinkles.discord.modules.roles.AssignableRole
-import xyz.bluspring.sprinkles.discord.modules.roles.RoleCategory
 import xyz.bluspring.sprinkles.discord.modules.roles.RoleManagerModule
+import xyz.bluspring.sprinkles.discord.modules.roles.storage.AssignableRole
+import xyz.bluspring.sprinkles.discord.modules.roles.storage.RoleCategory
 import java.util.*
 
 @SlashCommand("role", "Role commands", guildOnly = true, defaultUserPermissions = [ Permission.MANAGE_ROLES, Permission.MODERATE_MEMBERS ])

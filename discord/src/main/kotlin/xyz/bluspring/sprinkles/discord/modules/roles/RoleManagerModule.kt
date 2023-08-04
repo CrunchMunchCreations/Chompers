@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionE
 import xyz.artrinix.aviation.entities.AbstractModule
 import xyz.bluspring.sprinkles.SprinklesCore
 import xyz.bluspring.sprinkles.discord.SprinklesDiscord
+import xyz.bluspring.sprinkles.discord.modules.roles.storage.RoleCategory
 import java.io.File
 
 class RoleManagerModule : AbstractModule {

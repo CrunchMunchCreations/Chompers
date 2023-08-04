@@ -1,4 +1,4 @@
-package xyz.bluspring.sprinkles.discord.modules.roles
+package xyz.bluspring.sprinkles.discord.modules.roles.storage
 
 import kotlinx.serialization.Serializable
 
