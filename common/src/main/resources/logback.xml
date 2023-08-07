@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
+    <conversionRule conversionWord="customHighlight" converterClass="xyz.bluspring.sprinkles.util.LogbackHighlighting" />
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>[%cyan(%d{HH:mm:ss:SSS})] [%magenta(%16.-16thread)] [%highlight(%8.-8level)] [%36.-36logger{36}] %cyan:: %highlight(%msg) %n</pattern>
+            <pattern>[%cyan(%d{HH:mm:ss:SSS})] [%magenta(%16.-16thread)] [%customHighlight(%8.-8level)] [%36.-36logger{36}] %cyan:: %customHighlight(%msg) %n</pattern>
         </encoder>
     </appender>
 
