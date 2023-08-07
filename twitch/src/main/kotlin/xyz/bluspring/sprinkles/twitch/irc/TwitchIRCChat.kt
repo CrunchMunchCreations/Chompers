@@ -94,8 +94,9 @@ object TwitchIRCChat {
                 ev.cause.get().printStackTrace()
                 logger.info("Disconnected, attempting to reconnect...")
             } else {
-                ev.setAttemptReconnect(false)
-                logger.info("IRC channel stopped with no exception, will not attempt reconnection.")
+                ev.setAttemptReconnect(true)
+                ev.reconnectionDelay = 5000
+                logger.info("IRC channel stopped with no exception, attempting reconnection.")
             }
         }
     }
