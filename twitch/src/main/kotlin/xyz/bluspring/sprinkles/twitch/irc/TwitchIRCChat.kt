@@ -25,9 +25,6 @@ object TwitchIRCChat {
             this.client!!.shutdown("Reconnecting under different user")
         }
 
-        // attempt to force a refresh of the access token if needed
-        TwitchUserAuth.updateTwitchUserInfo()
-
         if (TwitchUserAuth.twitchUsername == null || TwitchUserAuth.accessToken == null) {
             logger.error("Failed to start IRC: Username or access token is missing!")
             return
@@ -106,7 +103,8 @@ object TwitchIRCChat {
 
                 Timer().schedule(object : TimerTask() {
                     override fun run() {
-                        startIrc()
+                        // attempt to force a refresh of the access token if needed
+                        TwitchUserAuth.updateTwitchUserInfo()
                     }
                 }, 5000L)
             }
