@@ -12,6 +12,7 @@ import xyz.bluspring.sprinkles.twitch.auth.TwitchUserAuth
 import xyz.bluspring.sprinkles.twitch.commands.CommandNotFoundException
 import xyz.bluspring.sprinkles.twitch.commands.CooldownManager
 import xyz.bluspring.sprinkles.twitch.commands.TwitchUser
+import java.util.*
 
 object TwitchIRCChat {
     var client: Client? = null
@@ -23,6 +24,9 @@ object TwitchIRCChat {
         if (this.client != null) {
             this.client!!.shutdown("Reconnecting under different user")
         }
+
+        // attempt to force a refresh of the access token if needed
+        TwitchUserAuth.updateTwitchUserInfo()
 
         if (TwitchUserAuth.twitchUsername == null || TwitchUserAuth.accessToken == null) {
             logger.error("Failed to start IRC: Username or access token is missing!")
@@ -55,6 +59,7 @@ object TwitchIRCChat {
     fun stopIrc() {
         this.client?.shutdown("Manually stopped")
         logger.info("IRC channel has been shut down.")
+        this.client = null
     }
 
     class TwitchIRCListener {
@@ -92,11 +97,18 @@ object TwitchIRCChat {
                 ev.setAttemptReconnect(true)
                 ev.reconnectionDelay = 5000
                 ev.cause.get().printStackTrace()
-                logger.info("Disconnected, attempting to reconnect...")
+                logger.warn("Disconnected, attempting to reconnect...")
             } else {
-                ev.setAttemptReconnect(true)
-                ev.reconnectionDelay = 5000
-                logger.info("IRC channel stopped with no exception, attempting reconnection.")
+                ev.setAttemptReconnect(false)
+                logger.warn("IRC channel stopped with no exception, attempting reconnection under a different client...")
+
+                stopIrc()
+
+                Timer().schedule(object : TimerTask() {
+                    override fun run() {
+                        startIrc()
+                    }
+                }, 5000L)
             }
         }
     }
