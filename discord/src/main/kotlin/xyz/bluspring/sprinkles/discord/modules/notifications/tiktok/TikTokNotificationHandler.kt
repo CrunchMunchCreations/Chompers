@@ -1,8 +1,9 @@
 package xyz.bluspring.sprinkles.discord.modules.notifications.tiktok
 
+import dev.minn.jda.ktx.generics.getChannel
 import dev.minn.jda.ktx.messages.Embed
 import dev.minn.jda.ktx.messages.MessageCreate
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 import xyz.bluspring.sprinkles.discord.SprinklesDiscord
 import xyz.bluspring.sprinkles.discord.modules.notifications.NotificationHandler
 import xyz.bluspring.sprinkles.platform.tiktok.TikTokApi
@@ -17,7 +18,7 @@ class TikTokNotificationHandler : NotificationHandler("TikTok") {
 
     private val allUsernames = SprinklesDiscord.instance.config.notifications.tiktok.usernames
     val updateMessage = SprinklesDiscord.instance.config.notifications.tiktok.updateMessage
-    val updateChannels = mutableListOf<TextChannel>()
+    val updateChannels = mutableListOf<GuildMessageChannel>()
 
     override suspend fun onEnable() {
         super.onEnable()
@@ -25,7 +26,9 @@ class TikTokNotificationHandler : NotificationHandler("TikTok") {
         val updateChannelIds = SprinklesDiscord.instance.config.notifications.tiktok.updateChannels
 
         updateChannelIds.forEach { id ->
-            updateChannels.add(SprinklesDiscord.instance.jda.getTextChannelById(id) ?: return@forEach)
+            val channel = SprinklesDiscord.instance.jda.getChannel<GuildMessageChannel>(id) ?: return@forEach
+            updateChannels.add(channel)
+            logger.info("Registered update channel #${channel.name} (${channel.id})")
         }
     }
     

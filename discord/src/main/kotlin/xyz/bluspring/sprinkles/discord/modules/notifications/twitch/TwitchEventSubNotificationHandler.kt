@@ -25,6 +25,9 @@ class TwitchEventSubNotificationHandler : TwitchNotificationHandler() {
     override suspend fun onEnable() {
         super.onEnable()
 
+        if (!isEnabled)
+            return
+
         val req = Request.Builder().apply {
             url(EVENT_SUB_URL)
         }.build()
@@ -84,10 +87,12 @@ class TwitchEventSubNotificationHandler : TwitchNotificationHandler() {
 
                                 when (subscription.get("type").asString) {
                                     "stream.online" -> {
+                                        logger.info(text)
                                         poll()
                                     }
 
                                     "stream.offline" -> {
+                                        logger.info(text)
                                         poll()
                                     }
                                 }
