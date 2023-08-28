@@ -75,9 +75,9 @@ object TwitterScraper {
 
             if (name == "a" && isInTimelineItem && attributes.contains("class") && attributes["class"]?.contains("tweet-link") == true) {
                 val href = attributes["href"]!!
-                val tweetUsername = href.removePrefix("/").replaceAfter("/", "")
+                val tweetUsername = href.removePrefix("/").replaceAfter("/", "").replace("/", "")
 
-                if (tweetUsername.lowercase() != username.lowercase()) {
+                if (tweetUsername.lowercase().trim() != username.lowercase().trim()) {
                     currentIsRetweet = true
                     currentUsername = tweetUsername
                 }
