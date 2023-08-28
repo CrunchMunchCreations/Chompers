@@ -1,10 +1,8 @@
 package xyz.bluspring.sprinkles.discord.modules.notifications.youtube
 
 import com.google.gson.JsonObject
-import dev.minn.jda.ktx.generics.getChannel
 import dev.minn.jda.ktx.messages.Embed
 import dev.minn.jda.ktx.messages.MessageCreate
-import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 import xyz.bluspring.sprinkles.discord.SprinklesDiscord
 import xyz.bluspring.sprinkles.discord.modules.notifications.NotificationHandler
 import xyz.bluspring.sprinkles.platform.youtube.YoutubeApi
@@ -15,20 +13,8 @@ import kotlin.time.Duration.Companion.days
 class YoutubeNotificationHandler : NotificationHandler("YouTube") {
     private val allIds = SprinklesDiscord.instance.config.notifications.youtube.usernames
     val updateMessage = SprinklesDiscord.instance.config.notifications.youtube.updateMessage
-    val updateChannels = mutableListOf<GuildMessageChannel>()
 
-    override suspend fun onEnable() {
-        super.onEnable()
-
-        val updateChannelIds = SprinklesDiscord.instance.config.notifications.youtube.updateChannels
-
-        updateChannelIds.forEach { id ->
-            val channel = SprinklesDiscord.instance.jda.getChannel<GuildMessageChannel>(id) ?: return@forEach
-
-            updateChannels.add(channel)
-            logger.info("Registered update channel #${channel.name} (${channel.id})")
-        }
-    }
+    override val updateChannelIds = SprinklesDiscord.instance.config.notifications.youtube.updateChannels
 
     override suspend fun poll() {
         for (id in allIds) {

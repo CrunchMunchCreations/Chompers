@@ -1,11 +1,14 @@
 package xyz.bluspring.sprinkles.discord.modules.notifications
 
 import com.charleskorn.kaml.Yaml
+import dev.minn.jda.ktx.generics.getChannel
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 import org.slf4j.LoggerFactory
 import xyz.artrinix.aviation.entities.AbstractModule
 import xyz.bluspring.sprinkles.SprinklesCore
+import xyz.bluspring.sprinkles.discord.SprinklesDiscord
 import java.io.File
 import java.util.*
 import kotlin.time.Duration
@@ -19,6 +22,9 @@ abstract class NotificationHandler(val platform: String) : AbstractModule {
     open val loopTime: Duration = 5.minutes
     open val isEnabled = true
 
+    val updateChannels = mutableListOf<GuildMessageChannel>()
+    protected abstract val updateChannelIds: List<Long>
+
     override suspend fun onEnable() {
         if (!isEnabled) {
             logger.info("Notification handler module for platform $platform is currently disabled!")
@@ -29,6 +35,13 @@ abstract class NotificationHandler(val platform: String) : AbstractModule {
 
         loadMarkedNotifications()
         runTimer()
+
+        updateChannelIds.forEach { id ->
+            val channel = SprinklesDiscord.instance.jda.getChannel<GuildMessageChannel>(id) ?: return@forEach
+
+            updateChannels.add(channel)
+            logger.info("Registered update channel #${channel.name} (${channel.id})")
+        }
     }
 
     open fun runTimer() {

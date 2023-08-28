@@ -1,10 +1,8 @@
 package xyz.bluspring.sprinkles.discord.modules.notifications.twitch
 
-import dev.minn.jda.ktx.generics.getChannel
 import dev.minn.jda.ktx.messages.Embed
 import dev.minn.jda.ktx.messages.MessageCreate
 import kotlinx.coroutines.flow.MutableSharedFlow
-import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 import xyz.artrinix.aviation.events.Event
 import xyz.bluspring.sprinkles.discord.SprinklesDiscord
 import xyz.bluspring.sprinkles.discord.events.TwitchStartBroadcastingEvent
@@ -17,7 +15,6 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 open class TwitchNotificationHandler : NotificationHandler("Twitch") {
-    val updateChannels = mutableListOf<GuildMessageChannel>()
     val updateMessage = SprinklesDiscord.instance.config.notifications.twitch.updateMessage
 
     val isLive = mutableSetOf<String>()
@@ -27,18 +24,7 @@ open class TwitchNotificationHandler : NotificationHandler("Twitch") {
 
     override val isEnabled: Boolean = true
 
-    override suspend fun onEnable() {
-        super.onEnable()
-
-        val updateChannelIds = SprinklesDiscord.instance.config.notifications.twitch.updateChannels
-
-        val jda = SprinklesDiscord.instance.jda
-        updateChannelIds.forEach { id ->
-            val channel = jda.getChannel<GuildMessageChannel>(id) ?: return@forEach
-            updateChannels.add(channel)
-            logger.info("Registered update channel #${channel.name} (${channel.id})")
-        }
-    }
+    override val updateChannelIds = SprinklesDiscord.instance.config.notifications.twitch.updateChannels
 
     override suspend fun poll() {
         val allUsernames = SprinklesDiscord.instance.config.notifications.twitch.usernames
