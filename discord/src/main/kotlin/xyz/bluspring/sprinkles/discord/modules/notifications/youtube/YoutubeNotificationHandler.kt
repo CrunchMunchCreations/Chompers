@@ -11,6 +11,9 @@ import java.time.format.DateTimeFormatter
 import kotlin.time.Duration.Companion.days
 
 class YoutubeNotificationHandler : NotificationHandler("YouTube") {
+    override val isEnabled: Boolean
+        get() = SprinklesDiscord.instance.config.notifications.youtube.isEnabled
+
     private val allIds = SprinklesDiscord.instance.config.notifications.youtube.usernames
     val updateMessage = SprinklesDiscord.instance.config.notifications.youtube.updateMessage
 

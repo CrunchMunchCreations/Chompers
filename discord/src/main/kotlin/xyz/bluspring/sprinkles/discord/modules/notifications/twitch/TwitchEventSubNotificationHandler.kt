@@ -13,7 +13,7 @@ import java.net.URI
 
 class TwitchEventSubNotificationHandler : TwitchNotificationHandler() {
     override val isEnabled: Boolean
-        get() = true
+        get() = SprinklesDiscord.instance.config.notifications.twitch.isEnabled
 
     lateinit var userIds: Map<String, String>
     lateinit var socket: WebSocket

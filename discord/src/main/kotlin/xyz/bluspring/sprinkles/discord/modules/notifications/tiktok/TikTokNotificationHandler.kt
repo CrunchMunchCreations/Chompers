@@ -17,6 +17,8 @@ class TikTokNotificationHandler : NotificationHandler("TikTok") {
     private val allUsernames = SprinklesDiscord.instance.config.notifications.tiktok.usernames
     val updateMessage = SprinklesDiscord.instance.config.notifications.tiktok.updateMessage
 
+    override val isEnabled: Boolean
+        get() = SprinklesDiscord.instance.config.notifications.tiktok.isEnabled
     override val updateChannelIds = SprinklesDiscord.instance.config.notifications.tiktok.updateChannels
     
     override suspend fun poll() {

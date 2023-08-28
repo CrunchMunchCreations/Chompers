@@ -22,7 +22,8 @@ open class TwitchNotificationHandler : NotificationHandler("Twitch") {
     override val loopTime: Duration
         get() = 2.minutes
 
-    override val isEnabled: Boolean = true
+    override val isEnabled: Boolean
+        get() = SprinklesDiscord.instance.config.notifications.twitter.isEnabled
 
     override val updateChannelIds = SprinklesDiscord.instance.config.notifications.twitch.updateChannels
 

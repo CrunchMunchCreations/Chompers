@@ -5,6 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DiscordNotifConfig(
+    @SerialName("enabled")
+    val isEnabled: Boolean = true,
+
     val usernames: List<String> = listOf(),
     @SerialName("update-channels")
     val updateChannels: List<Long> = listOf(),

@@ -11,5 +11,6 @@ data class DiscordNotificationsConfig(
         "https://commentpicker.com/youtube-channel-id.php"
     )
     val youtube: DiscordNotifConfig = DiscordNotifConfig(),
-    val tiktok: DiscordNotifConfig = DiscordNotifConfig()
+    val tiktok: DiscordNotifConfig = DiscordNotifConfig(),
+    val twitter: DiscordNotifConfig = DiscordNotifConfig()
 )
