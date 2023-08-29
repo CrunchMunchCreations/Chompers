@@ -36,6 +36,9 @@ class TwitterNotificationHandler : NotificationHandler("Twitter") {
                 if (previous.contains(tweet.id.toString()))
                     continue
 
+                if (tweet.isRetweet)
+                    continue
+
                 val message = MessageCreate {
                     content = updateMessage
                         .replace("%displayName%", tweet.userDisplayName)
