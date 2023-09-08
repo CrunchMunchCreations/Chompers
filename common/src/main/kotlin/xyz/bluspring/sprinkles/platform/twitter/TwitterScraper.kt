@@ -2,6 +2,7 @@ package xyz.bluspring.sprinkles.platform.twitter
 
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlHandler
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlParser
+import org.slf4j.LoggerFactory
 import java.net.URI
 import java.net.URLDecoder
 import java.net.http.HttpClient
@@ -12,6 +13,8 @@ object TwitterScraper {
     // A lot easier to use this than the official Twitter, funny enough.
     const val TWITTER_URL = "https://nitter.net"
     const val TWITTER_EPOCH = 1288834974657L
+
+    private val logger = LoggerFactory.getLogger(TwitterScraper::class.java)
 
     fun getTweets(username: String): List<TwitterTweet> {
         val client = HttpClient.newHttpClient()
@@ -30,6 +33,12 @@ object TwitterScraper {
         val resp = client.send(req, HttpResponse.BodyHandlers.ofString())
 
         val html = resp.body()
+
+        if (resp.statusCode() != 200) {
+            logger.error("Failed to scrape Twitter data! (${resp.statusCode()})")
+            logger.error("Response: ${resp.body()}")
+            return emptyList()
+        }
 
         val handler = TwitterUserPageHandler(username)
 
