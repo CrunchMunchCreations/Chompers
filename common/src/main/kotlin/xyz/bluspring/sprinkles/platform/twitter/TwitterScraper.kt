@@ -11,7 +11,7 @@ import java.net.http.HttpResponse
 
 object TwitterScraper {
     // A lot easier to use this than the official Twitter, funny enough.
-    const val TWITTER_URL = "https://nitter.net"
+    const val TWITTER_URL = "https://nitter.unixfox.eu"
     const val TWITTER_EPOCH = 1288834974657L
 
     private val logger = LoggerFactory.getLogger(TwitterScraper::class.java)
