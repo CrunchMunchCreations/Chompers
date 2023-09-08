@@ -18,7 +18,7 @@ object TwitterScraper {
 
     fun getTweets(username: String): List<TwitterTweet> {
         val client = HttpClient.newHttpClient()
-        val req = HttpRequest.newBuilder(URI.create("$TWITTER_URL/$username"))
+        val req = HttpRequest.newBuilder(URI.create("$TWITTER_URL/$username/"))
             .GET()
             .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
             .header("Sec-Ch-Ua", "\"Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"Google Chrome\";v=\"116\"")
