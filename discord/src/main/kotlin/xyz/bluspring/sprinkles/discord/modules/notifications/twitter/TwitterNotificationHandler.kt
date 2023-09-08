@@ -27,17 +27,17 @@ class TwitterNotificationHandler : NotificationHandler("Twitter") {
             val tweets = TwitterScraper.getTweets(username)
 
             val previous = this.getPreviousNotifications(username)
-            for (tweet in tweets) {
+            tweet@for (tweet in tweets) {
                 val timestamp = TwitterScraper.decodeSnowflakeToTimestamp(tweet.id)
 
                 if (System.currentTimeMillis() - timestamp >= 3.days.inWholeMilliseconds)
-                    continue
+                    continue@tweet
 
                 if (previous.contains(tweet.id.toString()))
-                    continue
+                    continue@tweet
 
                 if (tweet.isRetweet)
-                    continue
+                    continue@tweet
 
                 val message = MessageCreate {
                     content = updateMessage

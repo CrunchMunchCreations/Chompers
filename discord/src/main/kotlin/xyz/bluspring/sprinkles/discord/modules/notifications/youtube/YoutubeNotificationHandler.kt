@@ -30,21 +30,21 @@ class YoutubeNotificationHandler : NotificationHandler("YouTube") {
 
             val previous = getPreviousNotifications(id)
 
-            for (itemElement in uploads.getAsJsonArray("items")) {
+            item@for (itemElement in uploads.getAsJsonArray("items")) {
                 val item = itemElement.asJsonObject
 
                 val snippet = item.getAsJsonObject("snippet")
                 val videoId = snippet.getAsJsonObject("resourceId").get("videoId").asString
 
                 if (previous.contains(videoId))
-                    continue
+                    continue@item
 
                 val temporal = DateTimeFormatter.ISO_INSTANT.parse(snippet.get("publishedAt").asString)
                 val publishedAt = Instant.from(temporal)
                 val publishedMs = publishedAt.toEpochMilli()
 
                 if (System.currentTimeMillis() - publishedMs > 3.days.inWholeMilliseconds)
-                    continue
+                    continue@item
 
                 val title = snippet.get("title").asString
                 val description = snippet.get("description").asString

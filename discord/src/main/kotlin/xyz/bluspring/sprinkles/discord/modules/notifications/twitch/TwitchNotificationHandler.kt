@@ -40,12 +40,12 @@ open class TwitchNotificationHandler : NotificationHandler("Twitch") {
 
             val processed = mutableListOf<String>()
 
-            for (data in req.getAsJsonArray("data")) {
+            process@for (data in req.getAsJsonArray("data")) {
                 val stream = data.asJsonObject
                 val username = stream.get("user_login").asString
 
                 if (processed.contains(username))
-                    continue
+                    continue@process
 
                 processed.add(username)
 
@@ -57,7 +57,7 @@ open class TwitchNotificationHandler : NotificationHandler("Twitch") {
 
                 val previous = getPreviousNotifications(username)
                 if (previous.contains(stream.get("id").asString))
-                    continue
+                    continue@process
 
                 val message = MessageCreate {
                     content = updateMessage
@@ -98,9 +98,9 @@ open class TwitchNotificationHandler : NotificationHandler("Twitch") {
             if (processed.size != isLive.size) {
                 val toRemove = mutableListOf<String>()
 
-                for (username in isLive) {
+                pr@for (username in isLive) {
                     if (processed.contains(username))
-                        continue
+                        continue@pr
 
                     toRemove.add(username)
                     (SprinklesDiscord.instance.aviation.events as MutableSharedFlow<Event>)

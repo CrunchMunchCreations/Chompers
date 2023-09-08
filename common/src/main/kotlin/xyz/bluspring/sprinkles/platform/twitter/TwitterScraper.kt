@@ -2,8 +2,11 @@ package xyz.bluspring.sprinkles.platform.twitter
 
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlHandler
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlParser
-import java.net.URL
+import java.net.URI
 import java.net.URLDecoder
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 
 object TwitterScraper {
     // A lot easier to use this than the official Twitter, funny enough.
@@ -11,7 +14,14 @@ object TwitterScraper {
     const val TWITTER_EPOCH = 1288834974657L
 
     fun getTweets(username: String): List<TwitterTweet> {
-        val html = URL("$TWITTER_URL/$username").readText()
+        val client = HttpClient.newHttpClient()
+        val req = HttpRequest.newBuilder(URI.create("$TWITTER_URL/$username"))
+            .GET()
+            .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36")
+            .build()
+        val resp = client.send(req, HttpResponse.BodyHandlers.ofString())
+
+        val html = resp.body()
 
         val handler = TwitterUserPageHandler(username)
 

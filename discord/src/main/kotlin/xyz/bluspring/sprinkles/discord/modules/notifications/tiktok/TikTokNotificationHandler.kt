@@ -26,14 +26,14 @@ class TikTokNotificationHandler : NotificationHandler("TikTok") {
             val basicData = TikTokApi.getVideos(username)
             val prevMarked = this.getPreviousNotifications(username)
 
-            for (video in basicData) {
+            video@for (video in basicData) {
                 val timestamp = (video.id.toLong() shr 32) * 1000
 
                 if (System.currentTimeMillis() - timestamp >= 3.days.inWholeMilliseconds)
-                    continue
+                    continue@video
 
-                if (prevMarked.contains(video.id.toString()))
-                    continue
+                if (prevMarked.contains(video.id))
+                    continue@video
 
                 val message = MessageCreate {
                     content = updateMessage
