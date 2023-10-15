@@ -107,7 +107,7 @@ open class TwitchNotificationHandler : NotificationHandler("Twitch") {
                         .emit(TwitchStopBroadcastingEvent(username))
                 }
 
-                isLive.removeAll(toRemove.toSet())
+                isLive.removeIf { toRemove.contains(it) }
             }
         }
     }
