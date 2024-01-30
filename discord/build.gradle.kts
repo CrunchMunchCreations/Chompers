@@ -1,9 +1,13 @@
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     implementation(project(":common"))
 
-    api("net.dv8tion:JDA:5.0.0-beta.12") {
+    api("net.dv8tion:JDA:5.0.0-beta.20") {
         exclude(module = "opus-java")
     }
-    api("xyz.artrinix:aviation:f5aa7faf")
-    api("com.github.MinnDevelopment:jda-ktx:9370cb13cc")
+    api("xyz.artrinix:aviation:1c462196")
+    api("club.minnced:jda-ktx:0.11.0-beta.20")
 }
