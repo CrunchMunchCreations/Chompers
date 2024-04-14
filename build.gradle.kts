@@ -1,7 +1,7 @@
 plugins {
-    kotlin("jvm") version "1.8.22"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.22" apply false
-    id("com.github.johnrengelman.shadow") version "7.1.1"
+    kotlin("jvm") version "1.9.23"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23" apply false
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "xyz.bluspring"
