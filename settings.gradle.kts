@@ -1,4 +1,4 @@
 
-rootProject.name = "Sprinkles"
+rootProject.name = "Chompers"
 
 include("common", "discord", "core")
