@@ -13,7 +13,7 @@ val shadowImpl: Configuration by configurations.creating {
 dependencies {
     shadowImpl(project(":common"))
     shadowImpl(project(":discord"))
-    shadowImpl(project(":twitch"))
+    //shadowImpl(project(":twitch"))
 }
 
 

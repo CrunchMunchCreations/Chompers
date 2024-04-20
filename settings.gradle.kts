@@ -1,4 +1,4 @@
 
 rootProject.name = "Sprinkles"
 
-include("common", "discord", "core", "twitch")
+include("common", "discord", "core")
