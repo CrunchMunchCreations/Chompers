@@ -56,11 +56,10 @@ object CustomCommandManager {
             }
 
             var current = literal
-            val attachTo = mutableListOf<LiteralArgumentBuilder<TwitchUser>>()
 
             for ((name, argType) in command.args) {
                 if (command.optionalArgs.contains(name)) {
-                    current.executes {
+                    current = current.executes {
                         if (!CooldownManager.isWithinCooldown(it.source.login, command.name, command.globalCooldown, command.userCooldown))
                             return@executes 0
 
