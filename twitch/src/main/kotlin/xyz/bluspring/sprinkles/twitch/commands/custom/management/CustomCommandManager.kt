@@ -2,6 +2,7 @@ package xyz.bluspring.sprinkles.twitch.commands.custom.management
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.*
+import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
@@ -56,25 +57,26 @@ object CustomCommandManager {
             }
 
             var current = literal
+            var currentArg: ArgumentBuilder<TwitchUser, *>? = null
 
             for ((name, argType) in command.args) {
-                if (command.optionalArgs.contains(name)) {
-                    current = current.executes {
+                if (command.optionalArgs.contains(name) && currentArg != null) {
+                    currentArg = currentArg.executes {
                         if (!CooldownManager.isWithinCooldown(it.source.login, command.name, command.globalCooldown, command.userCooldown))
                             return@executes 0
 
                         it.source.send(
                             String.format(
                                 command.response,
-                                *getArguments(it, command.args).toTypedArray(),
+                                *getArguments(it, command.args, command.optionalArgs).toTypedArray(),
                                 *getCustomArguments(it, command.custom).toTypedArray()
                             ).replace("%user%", it.source.login)
                         )
                         return@executes 1
-                    }
+                    } as ArgumentBuilder<TwitchUser, *>
                 }
 
-                current = current.then(CommandManager.argument(name,
+                val arg = CommandManager.argument(name,
                     when (argType) {
                         BrigadierArgument.BOOLEAN -> BoolArgumentType.bool()
                         BrigadierArgument.FLOAT -> FloatArgumentType.floatArg()
@@ -85,21 +87,36 @@ object CustomCommandManager {
                         BrigadierArgument.WORD -> StringArgumentType.word()
                         BrigadierArgument.GREEDY_STRING -> StringArgumentType.greedyString()
                     }
-                ))
+                )
+
+                currentArg = if (currentArg == null)
+                    arg
+                else
+                    currentArg.then(arg) as ArgumentBuilder<TwitchUser, *>
             }
 
-            current.executes {
-                if (!CooldownManager.isWithinCooldown(it.source.login, command.name, command.globalCooldown, command.userCooldown))
-                    return@executes 0
+            val aaa: MutableList<ArgumentBuilder<TwitchUser, *>> = mutableListOf(current)
+            if (currentArg != null)
+                aaa.add(currentArg)
 
-                it.source.send(
-                    String.format(
-                        command.response,
-                        *getArguments(it, command.args).toTypedArray(),
-                        *getCustomArguments(it, command.custom).toTypedArray()
-                    ).replace("%user%", it.source.login)
-                )
-                return@executes 1
+            for (builder in aaa) {
+                builder.executes {
+                    if (!CooldownManager.isWithinCooldown(it.source.login, command.name, command.globalCooldown, command.userCooldown))
+                        return@executes 0
+
+                    it.source.send(
+                        String.format(
+                            command.response,
+                            *getArguments(it, command.args, command.optionalArgs).toTypedArray(),
+                            *getCustomArguments(it, command.custom).toTypedArray()
+                        ).replace("%user%", it.source.login)
+                    )
+                    return@executes 1
+                }
+            }
+
+            if (currentArg != null) {
+                current = current.then(currentArg)
             }
 
             register(current)
@@ -125,7 +142,7 @@ object CustomCommandManager {
         return results
     }
 
-    fun getArguments(context: CommandContext<TwitchUser>, args: Map<String, BrigadierArgument>): List<Any> {
+    fun getArguments(context: CommandContext<TwitchUser>, args: Map<String, BrigadierArgument>, optional: List<String>): List<Any> {
         val results = mutableListOf<Any>()
 
         for ((name, argType) in args) {
@@ -142,7 +159,10 @@ object CustomCommandManager {
                         BrigadierArgument.GREEDY_STRING -> StringArgumentType.getString(context, name)
                     }
                 )
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                if (!optional.contains(name))
+                    throw e
+            }
         }
 
         return results
