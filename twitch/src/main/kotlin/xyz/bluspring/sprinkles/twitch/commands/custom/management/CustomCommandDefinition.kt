@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class CustomCommandDefinition(
     val name: String,
     val args: MutableMap<String, BrigadierArgument> = mutableMapOf(),
+    val optionalArgs: MutableList<String> = mutableListOf(),
     val custom: MutableList<CustomArgument> = mutableListOf(),
     var response: String,
     var enabled: Boolean = true,

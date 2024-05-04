@@ -2,7 +2,6 @@ package xyz.bluspring.sprinkles.twitch.commands.custom.management
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.*
-import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
@@ -56,9 +55,26 @@ object CustomCommandManager {
                 it.matchesPermissionLevel(command.permissionLevel)
             }
 
-            var current: ArgumentBuilder<TwitchUser, *> = literal
+            var current = literal
+            val attachTo = mutableListOf<LiteralArgumentBuilder<TwitchUser>>()
 
             for ((name, argType) in command.args) {
+                if (command.optionalArgs.contains(name)) {
+                    current.executes {
+                        if (!CooldownManager.isWithinCooldown(it.source.login, command.name, command.globalCooldown, command.userCooldown))
+                            return@executes 0
+
+                        it.source.send(
+                            String.format(
+                                command.response,
+                                *getArguments(it, command.args).toTypedArray(),
+                                *getCustomArguments(it, command.custom).toTypedArray()
+                            ).replace("%user%", it.source.login)
+                        )
+                        return@executes 1
+                    }
+                }
+
                 current = current.then(CommandManager.argument(name,
                     when (argType) {
                         BrigadierArgument.BOOLEAN -> BoolArgumentType.bool()
@@ -70,7 +86,7 @@ object CustomCommandManager {
                         BrigadierArgument.WORD -> StringArgumentType.word()
                         BrigadierArgument.GREEDY_STRING -> StringArgumentType.greedyString()
                     }
-                )) as ArgumentBuilder<TwitchUser, *>
+                ))
             }
 
             current.executes {
@@ -87,7 +103,7 @@ object CustomCommandManager {
                 return@executes 1
             }
 
-            register(literal)
+            register(current)
         }
     }
 
@@ -114,18 +130,21 @@ object CustomCommandManager {
         val results = mutableListOf<Any>()
 
         for ((name, argType) in args) {
-            results.add(when (argType) {
-                BrigadierArgument.BOOLEAN -> BoolArgumentType.getBool(context, name)
-                BrigadierArgument.FLOAT -> FloatArgumentType.getFloat(context, name)
-                BrigadierArgument.DOUBLE -> DoubleArgumentType.getDouble(context, name)
-                BrigadierArgument.INTEGER -> IntegerArgumentType.getInteger(context, name)
-                BrigadierArgument.LONG -> LongArgumentType.getLong(context, name)
+            try {
+                results.add(
+                    when (argType) {
+                        BrigadierArgument.BOOLEAN -> BoolArgumentType.getBool(context, name)
+                        BrigadierArgument.FLOAT -> FloatArgumentType.getFloat(context, name)
+                        BrigadierArgument.DOUBLE -> DoubleArgumentType.getDouble(context, name)
+                        BrigadierArgument.INTEGER -> IntegerArgumentType.getInteger(context, name)
+                        BrigadierArgument.LONG -> LongArgumentType.getLong(context, name)
 
-                BrigadierArgument.STRING, BrigadierArgument.WORD,
-                BrigadierArgument.GREEDY_STRING -> StringArgumentType.getString(context, name)
-            })
+                        BrigadierArgument.STRING, BrigadierArgument.WORD,
+                        BrigadierArgument.GREEDY_STRING -> StringArgumentType.getString(context, name)
+                    }
+                )
+            } catch (_: Exception) {}
         }
-
 
         return results
     }

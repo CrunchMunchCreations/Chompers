@@ -73,7 +73,8 @@ object TwitchIRCChat {
                 if (SprinklesTwitch.instance.commandManager.multiDispatcher.execute(command, user) > 0)
                     CooldownManager.triggerCooldown(user.login, root)
             } catch (_: CommandNotFoundException) {
-                user.send("Sprinkles is just a cat. Sprinkles doesn't know what you want.")
+                //user.send("Sprinkles is just a cat. Sprinkles doesn't know what you want.")
+                user.send("Larry is just a cat. Larry doesn't know what you want.")
                 // don't handle CommandNotFoundExceptions
             } catch (e: Exception) {
                 user.send("Failed to run command! Error: ${e.message ?: e.localizedMessage}")
