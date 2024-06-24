@@ -215,12 +215,14 @@ class RoleCommand : Scaffold {
                 this
             }
 
-            category.description = name.run {
+            category.description = description.run {
                 if (this.isNullOrBlank())
                     return@run category.name
 
                 this
             }
+
+            ctx.sendPrivate("Successfully modified role!")
 
             RoleManagerModule.save()
         }
