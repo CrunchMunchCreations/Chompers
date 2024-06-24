@@ -75,7 +75,7 @@ class RoleCommand : Scaffold {
             RoleManagerModule.roles.add(category)
             RoleManagerModule.save()
 
-            ctx.sendPrivateEmbed {
+            ctx.sendEmbed {
                 this.setAuthor("(PREVIEW)")
                 this.setTitle(name)
                 this.setDescription(description.run {
@@ -311,6 +311,39 @@ class RoleCommand : Scaffold {
                     this
                 }}"
             })
+        }
+
+        @SlashSubCommand("Modifies a role description in a role category")
+        suspend fun modify(
+            ctx: SlashContext,
+
+            @Name("category_id")
+            categoryId: String,
+            role: Role,
+            displayName: String? = null,
+            description: String? = null
+        ) {
+            if (RoleManagerModule.roles.none { it.id == categoryId }) {
+                ctx.sendPrivate("ID $categoryId does not exist!")
+                return
+            }
+
+            val category = RoleManagerModule.roles.first { it.id == categoryId }
+
+            if (category.roles.none { it.roleId == role.idLong }) {
+                ctx.sendPrivate("Role ${role.asMention} does not exist in category!")
+                return
+            }
+            
+            val roleAssignable = category.roles.first { it.roleId == role.idLong }
+            
+            if (displayName != null)
+                roleAssignable.displayName = displayName
+            
+            if (description != null)
+                roleAssignable.description = description
+
+            ctx.sendPrivate("Modified role ${role.asMention} in category \"${category.name}\"!")
         }
     }
 }

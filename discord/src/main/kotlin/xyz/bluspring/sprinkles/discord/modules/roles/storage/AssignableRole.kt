@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AssignableRole(
     val roleId: Long,
-    val displayName: String,
-    val description: String
+    var displayName: String,
+    var description: String
 )
