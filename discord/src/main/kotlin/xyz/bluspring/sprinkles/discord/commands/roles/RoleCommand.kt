@@ -253,6 +253,16 @@ class RoleCommand : Scaffold {
                 return
             }
 
+            if (displayName != null && displayName.length > 100) {
+                ctx.sendPrivate("Display name is longer than 100 characters!")
+                return
+            }
+
+            if (description != null && description.length > 100) {
+                ctx.sendPrivate("Description is longer than 100 characters!")
+                return
+            }
+
             val assignable = AssignableRole(
                 role.idLong,
                 displayName ?: role.name, description ?: ""
@@ -337,11 +347,23 @@ class RoleCommand : Scaffold {
             
             val roleAssignable = category.roles.first { it.roleId == role.idLong }
             
-            if (displayName != null)
+            if (displayName != null) {
+                if (displayName.length > 100) {
+                    ctx.sendPrivate("Display name is longer than 100 characters!")
+                    return
+                }
+
                 roleAssignable.displayName = displayName
+            }
             
-            if (description != null)
+            if (description != null) {
+                if (description.length > 100) {
+                    ctx.sendPrivate("Description is longer than 100 characters!")
+                    return
+                }
+
                 roleAssignable.description = description
+            }
 
             ctx.sendPrivate("Modified role ${role.asMention} in category \"${category.name}\"!")
         }
