@@ -56,10 +56,27 @@ object CustomCommandManager {
                 it.matchesPermissionLevel(command.permissionLevel)
             }
 
-            var current: ArgumentBuilder<TwitchUser, *> = literal
+            var current = literal
+            var currentArg: ArgumentBuilder<TwitchUser, *>? = null
 
             for ((name, argType) in command.args) {
-                current = current.then(CommandManager.argument(name,
+                if (command.optionalArgs.contains(name) && currentArg != null) {
+                    currentArg = currentArg.executes {
+                        if (!CooldownManager.isWithinCooldown(it.source.login, command.name, command.globalCooldown, command.userCooldown))
+                            return@executes 0
+
+                        it.source.send(
+                            String.format(
+                                command.response,
+                                *getArguments(it, command.args, command.optionalArgs).toTypedArray(),
+                                *getCustomArguments(it, command.custom).toTypedArray()
+                            ).replace("%user%", it.source.login)
+                        )
+                        return@executes 1
+                    } as ArgumentBuilder<TwitchUser, *>
+                }
+
+                val arg = CommandManager.argument(name,
                     when (argType) {
                         BrigadierArgument.BOOLEAN -> BoolArgumentType.bool()
                         BrigadierArgument.FLOAT -> FloatArgumentType.floatArg()
@@ -70,24 +87,39 @@ object CustomCommandManager {
                         BrigadierArgument.WORD -> StringArgumentType.word()
                         BrigadierArgument.GREEDY_STRING -> StringArgumentType.greedyString()
                     }
-                )) as ArgumentBuilder<TwitchUser, *>
-            }
-
-            current.executes {
-                if (!CooldownManager.isWithinCooldown(it.source.login, command.name, command.globalCooldown, command.userCooldown))
-                    return@executes 0
-
-                it.source.send(
-                    String.format(
-                        command.response,
-                        *getArguments(it, command.args).toTypedArray(),
-                        *getCustomArguments(it, command.custom).toTypedArray()
-                    ).replace("%user%", it.source.login)
                 )
-                return@executes 1
+
+                currentArg = if (currentArg == null)
+                    arg
+                else
+                    currentArg.then(arg) as ArgumentBuilder<TwitchUser, *>
             }
 
-            register(literal)
+            val aaa: MutableList<ArgumentBuilder<TwitchUser, *>> = mutableListOf(current)
+            if (currentArg != null)
+                aaa.add(currentArg)
+
+            for (builder in aaa) {
+                builder.executes {
+                    if (!CooldownManager.isWithinCooldown(it.source.login, command.name, command.globalCooldown, command.userCooldown))
+                        return@executes 0
+
+                    it.source.send(
+                        String.format(
+                            command.response,
+                            *getArguments(it, command.args, command.optionalArgs).toTypedArray(),
+                            *getCustomArguments(it, command.custom).toTypedArray()
+                        ).replace("%user%", it.source.login)
+                    )
+                    return@executes 1
+                }
+            }
+
+            if (currentArg != null) {
+                current = current.then(currentArg)
+            }
+
+            register(current)
         }
     }
 
@@ -110,22 +142,28 @@ object CustomCommandManager {
         return results
     }
 
-    fun getArguments(context: CommandContext<TwitchUser>, args: Map<String, BrigadierArgument>): List<Any> {
+    fun getArguments(context: CommandContext<TwitchUser>, args: Map<String, BrigadierArgument>, optional: List<String>): List<Any> {
         val results = mutableListOf<Any>()
 
         for ((name, argType) in args) {
-            results.add(when (argType) {
-                BrigadierArgument.BOOLEAN -> BoolArgumentType.getBool(context, name)
-                BrigadierArgument.FLOAT -> FloatArgumentType.getFloat(context, name)
-                BrigadierArgument.DOUBLE -> DoubleArgumentType.getDouble(context, name)
-                BrigadierArgument.INTEGER -> IntegerArgumentType.getInteger(context, name)
-                BrigadierArgument.LONG -> LongArgumentType.getLong(context, name)
+            try {
+                results.add(
+                    when (argType) {
+                        BrigadierArgument.BOOLEAN -> BoolArgumentType.getBool(context, name)
+                        BrigadierArgument.FLOAT -> FloatArgumentType.getFloat(context, name)
+                        BrigadierArgument.DOUBLE -> DoubleArgumentType.getDouble(context, name)
+                        BrigadierArgument.INTEGER -> IntegerArgumentType.getInteger(context, name)
+                        BrigadierArgument.LONG -> LongArgumentType.getLong(context, name)
 
-                BrigadierArgument.STRING, BrigadierArgument.WORD,
-                BrigadierArgument.GREEDY_STRING -> StringArgumentType.getString(context, name)
-            })
+                        BrigadierArgument.STRING, BrigadierArgument.WORD,
+                        BrigadierArgument.GREEDY_STRING -> StringArgumentType.getString(context, name)
+                    }
+                )
+            } catch (e: Exception) {
+                if (!optional.contains(name))
+                    throw e
+            }
         }
-
 
         return results
     }
