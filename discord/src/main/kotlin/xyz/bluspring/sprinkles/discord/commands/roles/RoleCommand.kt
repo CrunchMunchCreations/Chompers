@@ -9,7 +9,10 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption
 import xyz.artrinix.aviation.annotations.Name
 import xyz.artrinix.aviation.command.slash.SlashContext
-import xyz.artrinix.aviation.command.slash.annotations.*
+import xyz.artrinix.aviation.command.slash.annotations.Description
+import xyz.artrinix.aviation.command.slash.annotations.SlashCommand
+import xyz.artrinix.aviation.command.slash.annotations.SlashSubCommand
+import xyz.artrinix.aviation.command.slash.annotations.SubCommandHolder
 import xyz.artrinix.aviation.entities.Scaffold
 import xyz.bluspring.sprinkles.discord.modules.roles.RoleManagerModule
 import xyz.bluspring.sprinkles.discord.modules.roles.storage.AssignableRole
@@ -160,7 +163,7 @@ class RoleCommand : Scaffold {
                 actionRow(StringSelectMenu(
                     categoryId,
                     "None selected",
-                    1..selections.size,
+                    0..selections.size,
                     false,
                     selections
                 ))
