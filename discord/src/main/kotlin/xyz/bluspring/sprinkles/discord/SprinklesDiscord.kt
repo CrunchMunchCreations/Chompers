@@ -47,6 +47,7 @@ class SprinklesDiscord : SprinklesBotModule<DiscordConfig>(NAME) {
             }
             .build()
             .apply {
+                messageCommands.register(CommandHelper::class.java.packageName)
                 slashCommands.register(CommandHelper::class.java.packageName)
                 modules.register(ModuleHelper::class.java.packageName)
             }
