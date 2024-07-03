@@ -38,6 +38,7 @@ class SprinklesDiscord : SprinklesBotModule<DiscordConfig>(NAME) {
 
         aviation = AviationBuilder()
             .apply {
+                prefixes = listOf("!")
                 ratelimitProvider = DefaultRateLimitStrategy()
 
                 testGuilds += config.testGuilds
