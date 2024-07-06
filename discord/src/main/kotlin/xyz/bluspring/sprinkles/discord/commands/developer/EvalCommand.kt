@@ -23,7 +23,7 @@ class EvalCommand : Scaffold {
         )
 
         if (engine == null) {
-            ctx.message.reply("Kotlin Script Engine failed to start!")
+            ctx.message.reply("Kotlin Script Engine failed to start!").await()
             return
         }
 
