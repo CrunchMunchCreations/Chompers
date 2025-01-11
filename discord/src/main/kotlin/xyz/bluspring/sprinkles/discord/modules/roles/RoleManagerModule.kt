@@ -1,6 +1,5 @@
 package xyz.bluspring.sprinkles.discord.modules.roles
 
-import com.charleskorn.kaml.Yaml
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.listener
 import kotlinx.serialization.Serializable
@@ -19,6 +18,20 @@ class RoleManagerModule : AbstractModule {
 
         jda.listener<StringSelectInteractionEvent> { event ->
             val selectionId = event.interaction.selectMenu.id
+
+            if (selectionId?.startsWith("sp_removeRole_") == true) {
+                val categoryId = selectionId.removePrefix("sp_removeRole_")
+                val category = roles.firstOrNull { it.id == categoryId } ?: return@listener
+
+                val msg = event.deferReply(true).await()
+
+                val allRoles = category.roles.mapNotNull { event.guild!!.getRoleById(it.roleId) }
+
+                event.guild!!.modifyMemberRoles(event.member!!, null, allRoles).await()
+                msg.editOriginal("Your roles have been removed successfully!").await()
+
+                return@listener
+            }
 
             val category = roles.firstOrNull { it.channelToMessage[event.channel.idLong]?.second == selectionId }
                 ?: return@listener
@@ -49,7 +62,7 @@ class RoleManagerModule : AbstractModule {
             if (!rolesFile.exists())
                 rolesFile.createNewFile()
 
-            rolesFile.writeText(Yaml.default.encodeToString(RoleFileStorage.serializer(), RoleFileStorage(roles)))
+            rolesFile.writeText(SprinklesCore.yaml.encodeToString(RoleFileStorage.serializer(), RoleFileStorage(roles)))
         }
 
         fun load() {
