@@ -43,12 +43,7 @@ class RoleCommand : Scaffold {
             name: String,
 
             color: String,
-            description: String? = "",
-
-            @Name("remove_role_name")
-            removeRoleName: String? = null,
-            @Name("remove_role_description")
-            removeRoleDesc: String? = null
+            description: String? = ""
         ) {
             if (RoleManagerModule.roles.any { it.id == id }) {
                 ctx.sendPrivate("ID $id has already been used!")
@@ -65,16 +60,6 @@ class RoleCommand : Scaffold {
                 return
             }
 
-            if (removeRoleName != null && removeRoleName.length > 100) {
-                ctx.sendPrivate("Remove Role name is too long!")
-                return
-            }
-
-            if (removeRoleDesc != null && removeRoleDesc.length > 100) {
-                ctx.sendPrivate("Remove Role description is too long!")
-                return
-            }
-
             if (color.removePrefix("#").length != 6) {
                 ctx.sendPrivate("Invalid color hex string!")
                 return
@@ -84,7 +69,7 @@ class RoleCommand : Scaffold {
 
             val category = RoleCategory(
                 id, name, description ?: "",
-                colorHex, removeRoleName, removeRoleDesc
+                colorHex
             )
 
             RoleManagerModule.roles.add(category)
@@ -166,14 +151,6 @@ class RoleCommand : Scaffold {
                 }
 
                 val selections = mutableListOf<SelectOption>()
-
-                if (category.removeRoleName != null) {
-                    selections.add(SelectOption(
-                        category.removeRoleName!!,
-                        "sp_removeRole_${category.id}",
-                        category.removeRoleDesc
-                    ))
-                }
 
                 for (role in category.roles) {
                     selections.add(SelectOption(
