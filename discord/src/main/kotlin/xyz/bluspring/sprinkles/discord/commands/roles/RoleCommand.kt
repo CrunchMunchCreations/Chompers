@@ -158,7 +158,7 @@ class RoleCommand : Scaffold {
                 embed {
                     title = category.name
                     color = category.color
-                    description = category.description
+                    description = category.description.replace("<br>", "\n")
 
                     this.footer {
                         this.name = "ID: ${category.id}"
